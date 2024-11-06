@@ -1,0 +1,30 @@
+
+# Create cluster from config file using eksctl
+eksctl create cluster -f eks-cluster.yaml       
+
+# Update kubeconfig to use new context
+aws eks --region us-east-1 update-kubeconfig --name eks-lcs-lab5      
+
+# Install an NFS server and provisioner in the cluster
+helm install nfs-server-provisioner nfs-ganesha-server-and-external-provisioner/nfs-server-provisioner \
+--set storageClass.name=nfs-lsc-lab5
+
+# Check StorageClass
+kubectl get storageclass
+
+# Create PVC
+kubectl apply -f pvc.yaml
+
+# Verify PVC and PV Binding
+kubectl get pvc nfs-pvc
+
+# Create deployment
+kubectl apply -f nginx-deployment.yaml
+
+# Create service
+kubectl apply -f service.yaml 
+
+# Create job
+kubectl apply -f job.yaml
+
+
